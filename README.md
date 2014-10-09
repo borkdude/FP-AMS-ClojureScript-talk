@@ -2,7 +2,7 @@
 
 Comparative example of Reagent and Om.
 
-# Running the project (with figwheel and weasel)
+## Running the project (with figwheel and weasel)
 
 In one terminal:
 
