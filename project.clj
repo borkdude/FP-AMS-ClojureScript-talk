@@ -12,6 +12,7 @@
                  [compojure "1.1.9"]
                  [liberator "0.12.2"]
                  [fogus/ring-edn "0.2.0"]
+                 [clj-json "0.5.3"]
                  [reagent "0.4.2"]
                  [om "0.7.1"]
                  [figwheel "0.1.4-SNAPSHOT"]
@@ -49,5 +50,6 @@
 
   :ring {:handler fpamsclj.api/handler
          :nrepl {:start? true :port 4500}
-         :port 8090}
+         :port 8090
+         :init fpamsclj.api/init}
   :global-vars {*print-length* 20})
