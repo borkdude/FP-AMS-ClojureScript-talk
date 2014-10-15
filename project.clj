@@ -8,7 +8,7 @@
                  [ring/ring-jetty-adapter "1.3.1"]
                  [org.webjars/react "0.11.2"]
                  [org.webjars/bootstrap "3.2.0"]
-                 [cljs-http "0.1.16"]
+                 [cljs-http "0.1.17"]
                  [compojure "1.1.9"]
                  [liberator "0.12.2"]
                  [fogus/ring-edn "0.2.0"]

@@ -12,7 +12,8 @@
 (defonce init-dev
   ;; we need to defonce this, so it won't be executed again upon code
   ;; reload
-  (go (let [body (:body (<! (http/get "/is-dev")))]
+  (go (let [body (<! (http/get "/is-dev"
+                               {:channel (chan 1 (map :body))}))]
         (when (= body true) ;; has to match exactly true and not some string
           (fw/watch-and-reload
            :websocket-url   "ws://localhost:3449/figwheel-ws"
