@@ -68,6 +68,10 @@
            assoc key
            (.. e -target -value))))
 
+(defn input-valid? [atom]
+  (and (seq (-> @atom :name))
+       (seq (-> @atom :species))))
+
 (defn editable-input [atom key]
   (if (:editing? @atom)
     [:input {:type     "text"
@@ -88,7 +92,8 @@
        [:td (editable-input row-state :name)]
        [:td (editable-input row-state :species)]
        [:td [:button.btn.btn-primary.pull-right
-             {:onClick (fn []
+             {:disabled (not (input-valid? row-state))
+              :onClick (fn []
                          (when (:editing? @row-state)
                            (update-animal! (current-animal)))
                          (swap! row-state update-in [:editing?] not))}
@@ -101,16 +106,13 @@
   (let [initial-form-values {:name     ""
                              :species  ""
                              :editing? true}
-        form-input-state (atom initial-form-values)
-        are-inputs-valid? (fn []
-                            (and (seq (-> @form-input-state :name))
-                                 (seq (-> @form-input-state :species))))]
+        form-input-state (atom initial-form-values)]
     (fn []
       [:tr
        [:td (editable-input form-input-state :name)]
        [:td (editable-input form-input-state :species)]
        [:td [:button.btn.btn-primary.pull-right
-             {:disabled (not (are-inputs-valid?))
+             {:disabled (not (input-valid? form-input-state))
               :onClick  (fn []
                           (add-animal! @form-input-state)
                           (reset! form-input-state initial-form-values))}
@@ -121,10 +123,7 @@
    [:table.table.table-striped
     [:thead
      [:tr
-      [:th "Name"]
-      [:th "Species"]
-      [:th ""]
-      [:th ""]]]
+      [:th "Name"] [:th "Species"] [:th ""] [:th ""]]]
     [:tbody
      (map (fn [a]
             ^{:key (str "animal-row-" (:id a))}
