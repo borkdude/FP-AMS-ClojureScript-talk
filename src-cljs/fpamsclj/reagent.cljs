@@ -14,12 +14,13 @@
   ;; reload
   (go (let [body (:body (<! (http/get "/is-dev")))]
         (when (= body true) ;; has to match exactly true and not some string
-          (fw/watch-and-reload
+          (println "dev mode is on")
+          #_(fw/watch-and-reload
            :websocket-url   "ws://localhost:3449/figwheel-ws"
            :jsload-callback
            (fn []
              (println "reloaded")))
-          (ws-repl/connect "ws://localhost:9001" :verbose true)))))
+          #_(ws-repl/connect "ws://localhost:9001" :verbose true)))))
 
 (defonce animals-state (atom #{}))
 
@@ -73,11 +74,16 @@
        (seq (-> @atom :species))))
 
 (defn editable-input [atom key]
-  (if (:editing? @atom)
-    [:input {:type     "text"
-             :value    (get @atom key)
-             :onChange (field-input-handler atom key)}]
-    (get @atom key)))
+  [:div
+   (if (:editing? @atom)
+     [:input {:type     "text"
+              :value    (get @atom key)
+              :onChange (field-input-handler atom key)}]
+     (get @atom key))])
+
+(def editable-input (with-meta editable-input
+                      {:component-did-mount (fn [this] (println "will mount"))
+                       :component-will-unmount (fn [this] (println "unmount"))}))
 
 (defn animal-row [a]
   (let [row-state (atom {:editing? false
@@ -89,8 +95,8 @@
                            :species (:species @row-state)))]
     (fn []
       [:tr
-       [:td (editable-input row-state :name)]
-       [:td (editable-input row-state :species)]
+       [:td [editable-input row-state :name]]
+       [:td [editable-input row-state :species]]
        [:td [:button.btn.btn-primary.pull-right
              {:disabled (not (input-valid? row-state))
               :onClick (fn []
